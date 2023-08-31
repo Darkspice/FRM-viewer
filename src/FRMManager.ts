@@ -85,10 +85,10 @@ export class FRMManager {
     }
 
     this.frmFiles.delete(frmId);
-    this.frmListContainer.querySelector(`[data-frm-id="${frmId}"]`)?.remove();
+    this.getLiByFrmId(frmId)?.remove();
 
     if (this.activeFrmId === frmId) {
-      this.stopFrm();
+      this.stopFrmAnimation();
     }
   }
 
@@ -102,9 +102,9 @@ export class FRMManager {
     if (!li) {
       return;
     }
-    const frmId = Number(li.dataset.frmId);
 
-    this.playFrm(frmId, this.activeFrmDir = 0);
+    const frmId = Number(li.dataset.frmId);
+    this.setActiveFrm(frmId);
   }
 
   /**
@@ -126,6 +126,68 @@ export class FRMManager {
   }
 
   /**
+   * Get li from ul list
+   */
+  public getLiByFrmId(frmId: number): HTMLLIElement | null {
+    return this.frmListContainer.querySelector(`[data-frm-id="${frmId}"]`);
+  }
+
+  /**
+   * Set active FRM, toggle styles to li, play FRM animation
+   */
+  public setActiveFrm(frmId: number) {
+    const li = this.getLiByFrmId(frmId);
+    const activeFrmLi = this.getLiByFrmId(this.activeFrmId);
+
+    if (li) {
+      li.classList.toggle('frm-active');
+      li.tabIndex = 0;
+      li.focus();
+    }
+
+    if (activeFrmLi) {
+      activeFrmLi.classList.toggle('frm-active');
+    }
+
+    this.activeFrmId = frmId;
+    this.playFrmAnimation(frmId, this.activeFrmDir = 0);
+  }
+
+  public setNextFrm() {
+    if (!this.frmFiles.size) {
+      return;
+    }
+
+    const frmListId = [...this.frmFiles.keys()];
+    const activeIdIndex = frmListId.findIndex((key) => key === this.activeFrmId);
+    const nextId = frmListId[activeIdIndex + 1];
+
+    if (nextId === undefined) {
+      this.setActiveFrm(frmListId[0]);
+      return;
+    }
+
+    this.setActiveFrm(nextId);
+  }
+
+  public setPreviousFrm() {
+    if (!this.frmFiles.size) {
+      return;
+    }
+
+    const frmListId = [...this.frmFiles.keys()];
+    const activeIdIndex = frmListId.findIndex((key) => key === this.activeFrmId);
+    const prevId = frmListId[activeIdIndex - 1];
+
+    if (prevId === undefined) {
+      this.setActiveFrm(frmListId[frmListId.length - 1]);
+      return;
+    }
+
+    this.setActiveFrm(prevId);
+  }
+
+  /**
    * Turn FRM clockwise or counter-clockwise
    */
   public changeFrmDirection(turnTo: -1 | 1) {
@@ -141,16 +203,15 @@ export class FRMManager {
       return;
     }
 
-    this.playFrm(this.activeFrmId, direction);
+    this.playFrmAnimation(this.activeFrmId, direction);
     this.activeFrmDir = direction;
   }
 
   /**
    * Start playing FRM in canvas
    */
-  public playFrm(frmId: number, dir: number) {
-    this.stopFrm();
-    this.activeFrmId = frmId;
+  public playFrmAnimation(frmId: number, dir: number) {
+    this.stopFrmAnimation();
     const frm = this.getFrmFile(frmId);
 
     if (!frm) {
@@ -160,9 +221,14 @@ export class FRMManager {
 
     const frames = frm.getFrames(dir);
 
+    if (frm.isStatic()) {
+      this.renderFrame(frames[0]);
+      return;
+    }
+
     let lastDelta = 0;
     let currentFrame = 0;
-    const delay = 1000 / (frm.frmHeader.fps || 1);
+    const delay = 1000 / frm.frmHeader.fps;
 
     const render = (delta: number) => {
       const interval = delta - lastDelta;
@@ -187,7 +253,7 @@ export class FRMManager {
   /**
    * Stop rendering FRM in canvas
    */
-  public stopFrm() {
+  public stopFrmAnimation() {
     window.cancelAnimationFrame(this.rafId);
     this.frmCtx.clearRect(0, 0, this.frmCanvas.width, this.frmCanvas.height);
   }

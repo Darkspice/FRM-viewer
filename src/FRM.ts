@@ -67,4 +67,8 @@ export class FRM {
 
     return this.frmFrames.slice(start, end);
   }
+
+  public isStatic() {
+    return this.frmHeader.numFrames <= 1;
+  }
 }

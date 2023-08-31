@@ -14,6 +14,26 @@ const frmManager = new FRMManager(frmList, canvas);
 clockwiseButton.onclick = frmManager.changeFrmDirection.bind(frmManager, 1);
 counterClockwiseButton.onclick = frmManager.changeFrmDirection.bind(frmManager, -1);
 
+// Register hotkeys
+document.addEventListener('keydown', (event) => {
+  if (event.code === 'ArrowDown') {
+    event.preventDefault();
+    frmManager.setNextFrm();
+  }
+  if (event.code === 'ArrowUp') {
+    event.preventDefault();
+    frmManager.setPreviousFrm();
+  }
+  if (event.code === 'ArrowRight') {
+    event.preventDefault();
+    frmManager.changeFrmDirection(1);
+  }
+  if (event.code === 'ArrowLeft') {
+    event.preventDefault();
+    frmManager.changeFrmDirection(-1);
+  }
+});
+
 input.onchange = (event) => {
   const target = event.target as HTMLInputElement;
   const files = target.files;

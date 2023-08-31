@@ -3,20 +3,39 @@
   font-size: 1rem;
 }
 
+p {
+  margin: 0;
+}
+
 html, body {
   height: 100%;
   padding: 0;
   margin: 0;
 }
 
+.container {
+  position: relative;
+}
+
+.container-title {
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  background-color: white;
+  z-index: 100;
+}
+
 #app {
-  display: flex;
-  height: 100%;
   margin: 0 12px;
 }
 
+.info-container {
+  display: flex;
+  gap: 16px;
+}
+
 #frm-input {
-  margin-top: 10px;
+  margin: 16px 0;
 }
 
 .frm-viewer {
@@ -26,12 +45,14 @@ html, body {
 }
 
 .frm-list {
+  box-sizing: border-box;
+  counter-reset: list;
+  list-style: none;
   align-self: flex-start;
-  width: 150px;
-  height: 346px;
+  width: 300px;
+  height: 400px;
   border: 2px solid darkslategray;
   margin: initial;
-  margin-top: 50px;
   overflow: auto;
   padding: 12px;
 }
@@ -50,7 +71,17 @@ html, body {
   justify-content: space-between;
 }
 
+.file-item > span::before {
+  counter-increment: list;
+  content: counter(list) ": ";
+}
+
+.frm-active {
+  background-color: coral;
+}
+
 #frm-container {
+  box-sizing: border-box;
   position: relative;
   display: flex;
   width: 300px;

@@ -11,20 +11,29 @@
 
 <body>
   <div id="app">
-    <div class="frm-viewer">
-      <input multiple id="frm-input" type="file" accept=".FRM" />
-      <div id="frm-container">
-        <canvas id="frm-canvas"></canvas>
-      </div>
-      <div id="controlls">
-        <span>Повернуть FRM</span>
-        <div class="rotate-buttons-container">
-          <button id="counter-clockwise">&lt;</button>
-          <button id="clockwise">&gt;</button>
+    <input multiple id="frm-input" type="file" accept=".FRM" />
+    <span>Hotkeys: ↑↓ - Выбор FRM, ←→ - Поворот FRM</span>
+    <div class="info-container">
+      <div class="frm-viewer">
+        <div class="container">
+          <p class="container-title">Просмотр:</p>
+          <div id="frm-container">
+            <canvas id="frm-canvas"></canvas>
+          </div>
+        </div>
+        <div id="controlls">
+          <span>Повернуть FRM</span>
+          <div class="rotate-buttons-container">
+            <button id="counter-clockwise">&lt;</button>
+            <button id="clockwise">&gt;</button>
+          </div>
         </div>
       </div>
+      <div class="container">
+        <p class="container-title">Список файлов:</p>
+        <ol class="frm-list"></ol>
+      </div>
     </div>
-    <ol class="frm-list"></ol>
   </div>
   <script type="module" src="/src/main.ts"></script>
 </body>
