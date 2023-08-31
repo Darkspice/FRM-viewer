@@ -92,6 +92,31 @@ export class FRMManager {
     }
   }
 
+  public removeActiveFrmFile() {
+    const deletingdActiveId = this.activeFrmId;
+
+    this.removeFrmFile(deletingdActiveId);
+
+    if (!this.frmFiles.size) {
+      return;
+    }
+
+    const frmIdList = [...this.frmFiles.keys()]
+    const maxId = Math.max(...frmIdList);
+
+    if (maxId === deletingdActiveId - 1) {
+      this.setActiveFrm(frmIdList[frmIdList.length - 1]);
+      return;
+    }
+
+    for (let id = deletingdActiveId + 1; id <= maxId; id++) {
+      if (this.frmFiles.has(id)) {
+        this.setActiveFrm(id);
+        return;
+      }
+    }
+  }
+
   /**
    * Choose frm file from the list
    */

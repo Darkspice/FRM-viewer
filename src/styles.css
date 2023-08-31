@@ -32,6 +32,7 @@ html, body {
 .info-container {
   display: flex;
   gap: 16px;
+  padding: 16px 0;
 }
 
 #frm-input {

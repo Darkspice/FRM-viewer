@@ -32,6 +32,10 @@ document.addEventListener('keydown', (event) => {
     event.preventDefault();
     frmManager.changeFrmDirection(-1);
   }
+  if (event.code === 'Backspace' || event.code === 'Delete') {
+    event.preventDefault();
+    frmManager.removeActiveFrmFile();
+  }
 });
 
 input.onchange = (event) => {
