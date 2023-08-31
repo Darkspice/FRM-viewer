@@ -1,3 +1,8 @@
+* {
+  font-family: monospace;
+  font-size: 1rem;
+}
+
 html, body {
   height: 100%;
   padding: 0;
@@ -5,14 +10,70 @@ html, body {
 }
 
 #app {
+  display: flex;
   height: 100%;
+  margin: 0 12px;
+}
+
+#frm-input {
+  margin-top: 10px;
+}
+
+.frm-viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.frm-list {
+  align-self: flex-start;
+  width: 150px;
+  height: 346px;
+  border: 2px solid darkslategray;
+  margin: initial;
+  margin-top: 50px;
+  overflow: auto;
+  padding: 12px;
+}
+
+.frm-list > li {
+  cursor: pointer;
+}
+
+.frm-list > li:hover {
+  background-color: bisque;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#frm-container {
+  position: relative;
+  display: flex;
+  width: 300px;
+  height: 400px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid darkslategray;
+}
+
+#controlls {
+  width: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+}
+
+.rotate-buttons-container {
+  display: flex;
   gap: 16px;
 }
 
 canvas {
+  position: absolute;
   image-rendering: pixelated;
 }

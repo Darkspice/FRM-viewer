@@ -1,17 +1,32 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
-    <link rel="stylesheet" href="/src/styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FRM Reader</title>
-  </head>
-  <body>
-    <div id="app">
-      <input id="frm-input" type="file" />
-      <div id="frm-container"></div>
+
+<head>
+  <meta charset="UTF-8" />
+  <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+  <link rel="stylesheet" href="/src/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FRM Reader</title>
+</head>
+
+<body>
+  <div id="app">
+    <div class="frm-viewer">
+      <input multiple id="frm-input" type="file" accept=".FRM" />
+      <div id="frm-container">
+        <canvas id="frm-canvas"></canvas>
+      </div>
+      <div id="controlls">
+        <span>Повернуть FRM</span>
+        <div class="rotate-buttons-container">
+          <button id="counter-clockwise">&lt;</button>
+          <button id="clockwise">&gt;</button>
+        </div>
+      </div>
     </div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+    <ol class="frm-list"></ol>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>
