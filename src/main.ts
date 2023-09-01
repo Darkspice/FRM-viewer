@@ -1,6 +1,6 @@
 import { FRMManager } from "./FRMManager";
 
-const app = document.querySelector("#app") as HTMLDivElement;
+// const app = document.querySelector("#app") as HTMLDivElement;
 const frmContainer = document.querySelector("#frm-container") as HTMLDivElement;
 const frmContainerWidth = frmContainer.clientWidth;
 const frmContainerHeight = frmContainer.clientHeight;
