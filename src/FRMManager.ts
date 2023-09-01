@@ -4,8 +4,12 @@ import { palette } from "./palette";
 
 export class FRMManager {
   public frmListContainer: HTMLOListElement;
+
   public frmCanvas: HTMLCanvasElement;
   public frmCtx: CanvasRenderingContext2D;
+  public frmScale: number = 1;
+  public userFrmShiftX: number = 0;
+  public userFrmShiftY: number = 0;
 
   public readonly frmFiles: Map<number, FRM> = new Map();
 
@@ -212,6 +216,24 @@ export class FRMManager {
     this.setActiveFrm(prevId);
   }
 
+  public increaseFrmScale() {
+    if (this.frmScale >= 5) {
+      return;
+    }
+    this.frmScale += 1;
+    this.frmCtx.resetTransform();
+    this.frmCtx.scale(this.frmScale, this.frmScale);
+  }
+
+  public decreaseFrmScale() {
+    if (this.frmScale <= 1) {
+      return;
+    }
+    this.frmScale -= 1;
+    this.frmCtx.resetTransform();
+    this.frmCtx.scale(this.frmScale, this.frmScale);
+  }
+
   /**
    * Turn FRM clockwise or counter-clockwise
    */
@@ -232,6 +254,73 @@ export class FRMManager {
     this.activeFrmDir = direction;
   }
 
+  public setUserShift(x: number, y: number) {
+    this.userFrmShiftX += x;
+    this.userFrmShiftY += y;
+
+    const frm = this.getFrmFile(this.activeFrmId);
+
+    if (!frm) {
+      return;
+    }
+
+    if (frm.isStatic()) {
+      this.renderStaticFrm(this.activeFrmId, this.activeFrmDir);
+    }
+  }
+
+  public resetUserShift() {
+    this.userFrmShiftX = 0;
+    this.userFrmShiftY = 0;
+
+    const frm = this.getFrmFile(this.activeFrmId);
+
+    if (!frm) {
+      return;
+    }
+
+    if (frm.isStatic()) {
+      this.renderStaticFrm(this.activeFrmId, this.activeFrmDir);
+    }
+  }
+
+  public getBaseShift(frmId: number, dir: number) {
+    const frm = this.getFrmFile(frmId);
+
+    if (!frm) {
+      console.error('can\'t get shifts');
+      return [0, 0];
+    }
+
+    return [
+      Math.floor((this.frmCanvas.width / 2) / this.frmScale) + frm.frmHeader.pixelShiftX[dir] + this.userFrmShiftX,
+      Math.floor((this.frmCanvas.height - 200 / 2 ) / this.frmScale) + frm.frmHeader.pixelShiftY[dir] + this.userFrmShiftY,
+    ];
+  }
+
+
+  public renderStaticFrm(frmId: number, dir: number) {
+    const frm = this.getFrmFile(frmId);
+
+    if (!frm) {
+      console.error('no such FRM in frm list');
+      return;
+    }
+
+    const frames = frm.getFrames(dir);
+    const currentFrame = 0;
+
+    let [shiftX, shiftY] = this.getBaseShift(frmId, dir);
+
+      shiftX -= Math.floor(frames[currentFrame].frameWidth / 2);
+      shiftY -= frames[currentFrame].frameHeight;
+
+      shiftX += frames[currentFrame].shiftX;
+      shiftY += frames[currentFrame].shiftY;
+
+      this.renderFrame(frames[0], shiftX, shiftY);
+  }
+
   /**
    * Start playing FRM in canvas
    */
@@ -246,13 +335,16 @@ export class FRMManager {
 
     const frames = frm.getFrames(dir);
 
+    let lastDelta = 0;
+    let currentFrame = 0;
+    let shiftX = 0;
+    let shiftY = 0;
+
     if (frm.isStatic()) {
-      this.renderFrame(frames[0]);
+      this.renderStaticFrm(frmId, dir);
       return;
     }
 
-    let lastDelta = 0;
-    let currentFrame = 0;
     const delay = 1000 / frm.frmHeader.fps;
 
     const render = (delta: number) => {
@@ -260,12 +352,31 @@ export class FRMManager {
       if (interval > delay) {
         lastDelta = delta;
 
-        this.renderFrame(frames[currentFrame])
+        const [baseX, baseY] = this.getBaseShift(frmId, dir);
+
+        shiftX += baseX;
+        shiftY += baseY;
+
+        shiftX -= Math.floor(frames[currentFrame].frameWidth / 2);
+        shiftY -= frames[currentFrame].frameHeight;
+
+        shiftX += frames[currentFrame].shiftX;
+        shiftY += frames[currentFrame].shiftY;
+
+        this.renderFrame(frames[currentFrame], shiftX, shiftY);
+
+        shiftX += Math.floor(frames[currentFrame].frameWidth / 2);
+        shiftY += frames[currentFrame].frameHeight;
+
+        shiftX -= baseX;
+        shiftY -= baseY;
 
         currentFrame += 1;
 
         if (currentFrame >= frm.frmHeader.numFrames) {
           currentFrame = 0;
+          shiftX = 0;
+          shiftY = 0;
         }
       }
 
@@ -286,11 +397,10 @@ export class FRMManager {
   /**
    * Render specific FRM frame
    */
-  public renderFrame(frame: FRMFrame) {
-    this.frmCanvas.width = frame.frameWidth;
-    this.frmCanvas.height = frame.frameHeight;
+  public renderFrame(frame: FRMFrame, shiftX: number, shiftY: number) {
 
     const viewer = new DataView(frame.frmBuffer, frame.offset + FRMFrame.frameHeaderLength);
+    this.frmCtx.clearRect(0, 0, this.frmCanvas.width, this.frmCanvas.height);
 
     for (let y = 0; y < frame.frameHeight; y++) {
       for (let x = 0; x < frame.frameWidth; x++) {
@@ -299,7 +409,7 @@ export class FRMManager {
         const g = palette[position + 1];
         const b = palette[position + 2];
         this.frmCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-        this.frmCtx.fillRect(x, y, 1, 1);
+        this.frmCtx.fillRect(x + shiftX, y + shiftY, 1, 1);
       }
     }
   }

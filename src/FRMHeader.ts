@@ -20,8 +20,8 @@ export class FRMHeader {
     this.numFrames = viewer.getUint16(8) || this.defaultNumFrames;
 
     for (let i = 0; i < 6; i++) {
-      this.pixelShiftX[i] = viewer.getUint16(10 + (i * 2));
-      this.pixelShiftY[i] = viewer.getUint16(22 + (i * 2));
+      this.pixelShiftX[i] = viewer.getInt16(10 + (i * 2));
+      this.pixelShiftY[i] = viewer.getInt16(22 + (i * 2));
       this.dirrOffest[i] = viewer.getUint32(34 + (i * 4)) + this.frameDataStart;
     }
 

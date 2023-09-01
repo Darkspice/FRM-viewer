@@ -7,7 +7,8 @@ p {
   margin: 0;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   padding: 0;
   margin: 0;
@@ -45,10 +46,55 @@ html, body {
   gap: 16px;
 }
 
+#frm-move-up,
+#frm-move-bottom,
+#frm-move-left,
+#frm-move-right,
+#frm-shift-reset,
+#counter-clockwise,
+#clockwise {
+  position: absolute;
+  cursor: pointer;
+  z-index: 100;
+}
+
+#frm-move-up {
+  right: 50px;
+  top: 10px;
+}
+
+#frm-move-bottom {
+  right: 50px;
+  top: 60px;
+}
+
+#frm-move-left {
+  right: 75px;
+  top: 35px;
+}
+
+#frm-move-right {
+  right: 25px;
+  top: 35px;
+}
+
+#frm-shift-reset {
+  right: 50px;
+  top: 35px;
+}
+
+#counter-clockwise {
+  left: 30px;
+  top: 35px;
+}
+
+#clockwise {
+  left: 60px;
+  top: 35px;
+}
+
 .frm-list {
   box-sizing: border-box;
-  counter-reset: list;
-  list-style: none;
   align-self: flex-start;
   width: 300px;
   height: 400px;
@@ -56,26 +102,33 @@ html, body {
   margin: initial;
   overflow: auto;
   padding: 12px;
+  padding-left: 56px;
 }
 
-.frm-list > li {
+.frm-list>li {
   cursor: pointer;
 }
 
-.frm-list > li:hover {
+.frm-list>li:hover {
   background-color: bisque;
 }
 
 .file-item {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.file-item > span::before {
+/* Одна из реализаций вывода количества файлов - это через css counter */
+/* .frm-list {
+  counter-reset: list;
+} */
+/* .file-item > span::before {
+  position: absolute;
   counter-increment: list;
   content: counter(list) ": ";
-}
+} */
 
 .frm-active {
   background-color: coral;
@@ -85,20 +138,17 @@ html, body {
   box-sizing: border-box;
   position: relative;
   display: flex;
-  width: 300px;
-  height: 400px;
   align-items: center;
   justify-content: center;
+  width: 500px;
+  height: 400px;
   border: 2px solid darkslategray;
 }
 
-#controlls {
-  width: 300px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
+/* #frm-canvas {
+  width: 296px;
+  height: 396px;
+} */
 
 .rotate-buttons-container {
   display: flex;

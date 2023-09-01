@@ -4,7 +4,6 @@ export class FRMFrame {
   size: number;
   shiftX: number;
   shiftY: number;
-  indices: number[];
 
   frmBuffer: ArrayBuffer;
   offset: number;
@@ -22,8 +21,8 @@ export class FRMFrame {
     this.frameWidth = viewer.getUint16(0);
     this.frameHeight = viewer.getUint16(2);
     this.size = viewer.getUint32(4);
-    this.shiftX = viewer.getUint16(8);
-    this.shiftY = viewer.getUint16(10);
+    this.shiftX = viewer.getInt16(8);
+    this.shiftY = viewer.getInt16(10);
 
     this.frameSize = this.getFrameSize();
   }

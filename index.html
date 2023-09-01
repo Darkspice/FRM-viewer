@@ -15,20 +15,22 @@
     <div>
       <div><strong>Hotkeys:</strong> ↑↓ - Выбор FRM, ←→ - Поворот FRM</div>
       <div>Backspace или Delete - удалить FRM</div>
+      <div>Shift + ↑↓←→ - сдвинуть FRM</div>
+      <div>Shift + R - сбросить сдвиг FRM</div>
     </div>
     <div class="info-container">
       <div class="frm-viewer">
         <div class="container">
           <p class="container-title">Просмотр:</p>
+          <button id="frm-move-up">↑</button>
+          <button id="frm-move-bottom">↓</button>
+          <button id="frm-move-left">←</button>
+          <button id="frm-move-right">→</button>
+          <button id="frm-shift-reset">↺</button>
+          <button id="counter-clockwise">↪</button>
+          <button id="clockwise">↩</button>
           <div id="frm-container">
             <canvas id="frm-canvas"></canvas>
-          </div>
-        </div>
-        <div id="controlls">
-          <span>Повернуть FRM</span>
-          <div class="rotate-buttons-container">
-            <button id="counter-clockwise">&lt;</button>
-            <button id="clockwise">&gt;</button>
           </div>
         </div>
       </div>
