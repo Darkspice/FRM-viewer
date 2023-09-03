@@ -2,16 +2,16 @@ import { FRMFrame } from "./FRMFrame";
 import { FRMHeader } from "./FRMHeader";
 
 export class FRM {
-  name: string;
-  isLoaded: boolean;
-  frmHeader: FRMHeader;
-  frmFrames: FRMFrame[];
+  public name: string;
+  public isLoaded: boolean;
+  public frmHeader: FRMHeader;
+  public frmFrames: FRMFrame[];
 
-  directions = 6;
+  public directions = 6;
 
-  onLoad: (() => void) | null = null;
+  public onLoad: (() => void) | null = null;
 
-  FRMBuffer: ArrayBuffer;
+  public FRMBuffer: ArrayBuffer;
 
   constructor(file: File) {
     // @TODO: how about file.arrayBuffer ?
@@ -23,10 +23,10 @@ export class FRM {
       this.isLoaded = true;
 
       this.FRMBuffer = reader.result as ArrayBuffer;
-      this.frmHeader = this.createFrmHeader(this.FRMBuffer);
+      this.frmHeader = new FRMHeader(this.FRMBuffer);
 
-      const isOneDirection = this.frmHeader.dirrOffest.every((offset) => offset === this.frmHeader.dirrOffest[0]);
-      if (isOneDirection) {
+      const hasOneDirection = this.frmHeader.dirrOffest.every((offset) => offset === this.frmHeader.dirrOffest[0]);
+      if (hasOneDirection) {
         this.directions = 1;
       }
 
@@ -39,15 +39,14 @@ export class FRM {
 
   }
 
-  private createFrmHeader(buffer: ArrayBuffer) {
-    return new FRMHeader(buffer);
-  }
-
   private createAllFrmFrames() {
-    const frames: FRMFrame[] = Array(this.directions);
+    const frames: FRMFrame[] = Array(this.directions * this.frmHeader.numFrames);
+
     for(let dir = 0; dir < this.directions; dir++) {
+
       const dirOffset = this.frmHeader.dirrOffest[dir];
       let frameOffset = 0;
+
       for (let frame = 0; frame < this.frmHeader.numFrames; frame++) {
         const currentOffset = dirOffset + frameOffset;
         const index = dir * this.frmHeader.numFrames + frame;

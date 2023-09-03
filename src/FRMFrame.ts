@@ -1,37 +1,50 @@
 export class FRMFrame {
-  frameWidth: number;
-  frameHeight: number;
-  size: number;
-  shiftX: number;
-  shiftY: number;
+  private readonly viewer: DataView;
 
-  frmBuffer: ArrayBuffer;
-  offset: number;
+  public frameWidth: number;
+  public frameHeight: number;
+  public size: number;
+  public shiftX: number;
+  public shiftY: number;
 
-  frameSize: number;
+  public frmBuffer: ArrayBuffer;
+  public offset: number;
 
-  static readonly frameHeaderLength: number = 12;
+  public frameSize: number;
+
+  // Color indices start at 12 position
+  public frameHeaderLength: number = 12;
 
   constructor(buffer: ArrayBuffer, offset: number) {
     this.frmBuffer = buffer;
     this.offset = offset;
 
-    const viewer = new DataView(this.frmBuffer, this.offset);
+    this.viewer = new DataView(this.frmBuffer, this.offset);
 
-    this.frameWidth = viewer.getUint16(0);
-    this.frameHeight = viewer.getUint16(2);
-    this.size = viewer.getUint32(4);
-    this.shiftX = viewer.getInt16(8);
-    this.shiftY = viewer.getInt16(10);
+    this.frameWidth = this.viewer.getUint16(0);
+    this.frameHeight = this.viewer.getUint16(2);
+    this.size = this.viewer.getUint32(4);
+    this.shiftX = this.viewer.getInt16(8);
+    this.shiftY = this.viewer.getInt16(10);
 
-    this.frameSize = this.getFrameSize();
+    this.frameSize = this.size + this.frameHeaderLength;
   }
 
-  getFrameSize() {
-    return this.size + FRMFrame.frameHeaderLength;
+  public *getFrameIndices() {
+    for (let i = 0; i < this.size; i++) {
+      yield this.viewer.getUint8(this.frameHeaderLength + i);
+    }
   }
 
-  print() {
+  public getFrameIndex(indexPosition: number) {
+    if (indexPosition >= this.frameSize || indexPosition < 0) {
+      console.error(`frame color index position: ${indexPosition} out of range`);
+    }
+
+    return this.viewer.getUint8(this.frameHeaderLength + indexPosition);
+  }
+
+  public print() {
     console.log(this);
   }
 }

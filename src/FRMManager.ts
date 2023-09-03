@@ -96,6 +96,9 @@ export class FRMManager {
     }
   }
 
+  /**
+   * Deleting FRM which is currently selected
+   */
   public removeActiveFrmFile() {
     const deletingdActiveId = this.activeFrmId;
 
@@ -151,7 +154,12 @@ export class FRMManager {
     }
 
     const frmId = Number(li.dataset.frmId);
-    this.removeFrmFile(frmId);
+
+    if (frmId === this.activeFrmId) {
+      this.removeActiveFrmFile();
+    } else {
+      this.removeFrmFile(frmId);
+    }
   }
 
   /**
@@ -294,7 +302,7 @@ export class FRMManager {
 
     return [
       Math.floor((this.frmCanvas.width / 2) / this.frmScale) + frm.frmHeader.pixelShiftX[dir] + this.userFrmShiftX,
-      Math.floor((this.frmCanvas.height - 200 / 2 ) / this.frmScale) + frm.frmHeader.pixelShiftY[dir] + this.userFrmShiftY,
+      Math.floor((this.frmCanvas.height - 200 / 2) / this.frmScale) + frm.frmHeader.pixelShiftY[dir] + this.userFrmShiftY,
     ];
   }
 
@@ -312,13 +320,13 @@ export class FRMManager {
 
     let [shiftX, shiftY] = this.getBaseShift(frmId, dir);
 
-      shiftX -= Math.floor(frames[currentFrame].frameWidth / 2);
-      shiftY -= frames[currentFrame].frameHeight;
+    shiftX -= Math.floor(frames[currentFrame].frameWidth / 2);
+    shiftY -= frames[currentFrame].frameHeight;
 
-      shiftX += frames[currentFrame].shiftX;
-      shiftY += frames[currentFrame].shiftY;
+    shiftX += frames[currentFrame].shiftX;
+    shiftY += frames[currentFrame].shiftY;
 
-      this.renderFrame(frames[0], shiftX, shiftY);
+    this.renderFrame(frames[0], shiftX, shiftY);
   }
 
   /**
@@ -398,13 +406,11 @@ export class FRMManager {
    * Render specific FRM frame
    */
   public renderFrame(frame: FRMFrame, shiftX: number, shiftY: number) {
-
-    const viewer = new DataView(frame.frmBuffer, frame.offset + FRMFrame.frameHeaderLength);
     this.frmCtx.clearRect(0, 0, this.frmCanvas.width, this.frmCanvas.height);
 
     for (let y = 0; y < frame.frameHeight; y++) {
       for (let x = 0; x < frame.frameWidth; x++) {
-        const position = viewer.getUint8(y * frame.frameWidth + x) * 3 /* palette array shift */;
+        const position = frame.getFrameIndex(y * frame.frameWidth + x) * 3 /* palette array shift */;
         const r = palette[position];
         const g = palette[position + 1];
         const b = palette[position + 2];
