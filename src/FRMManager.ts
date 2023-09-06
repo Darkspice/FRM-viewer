@@ -1,5 +1,4 @@
-import { FRM } from "./FRM";
-import { FRMFrame } from "./FRMFrame";
+import { FRMFrame, FRM } from "./FRM";
 import { palette } from "./palette";
 
 export class FRMManager {
