@@ -266,3 +266,69 @@ export const palette = [
 
   return color * 4;
 });
+
+export const PALETTE_INDICES_OFFSET = 3;
+
+// Slime 229
+export const SLIME_OFFSET = 229;
+export const SLIME_DELAY = 200;
+export const slime = [
+  0, 108, 0,
+  11, 115, 7,
+  27, 123, 15,
+  43, 131, 27
+];
+
+export const MONITORS_OFFSET = 233;
+export const MONITORS_DELAY = 100;
+export const monitors = [
+  107, 107, 111,
+  99, 103, 127,
+  87, 107, 143,
+  0, 147, 163,
+  107, 187, 255
+];
+
+export const FIRE_SLOW_OFFSET = 238;
+export const FIRE_SLOW_DELAY = 200;
+export const fireSlow = [
+  255, 0, 0,
+  215, 0, 0,
+  147, 43, 11,
+  255, 119, 0,
+  255, 59, 0
+];
+
+export const FIRE_FAST_OFFSET = 243;
+export const FIRE_FAST_DELAY = 142;
+export const fireFast = [
+  71, 0, 0,
+  123, 0, 0,
+  179, 0, 0,
+  123, 0, 0,
+  71, 0, 0
+];
+
+export const SHORELINE_OFFSET = 243;
+export const SHORELINE_DELAY = 200;
+export const shoreline = [
+  83, 63, 43,
+  75, 59, 43,
+  67, 55, 39,
+  63, 51, 39,
+  55, 47, 35,
+  51, 43, 35
+];
+
+export const createPaletteUpdater = (palette: number[], offset: number, colors: number[], delay: number) => {
+  let lastDelta = 0;
+  return function(delta: number) {
+    const interval = delta - lastDelta;
+      if (interval > delay) {
+        lastDelta = delta;
+        const deletedColors = colors.splice(0, PALETTE_INDICES_OFFSET);
+        colors.push(...deletedColors);
+        palette.splice(offset * PALETTE_INDICES_OFFSET, colors.length, ...colors);
+      }
+  }
+};

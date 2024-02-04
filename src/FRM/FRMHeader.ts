@@ -16,7 +16,14 @@ export class FRMHeader {
   constructor(buffer: ArrayBuffer) {
     const viewer = new DataView(buffer);
     this.version = viewer.getUint32(0);
+
     this.fps = viewer.getUint16(4) || this.defaultFps;
+    // @TODO: static frm always has 1 fps, we make it 10 for
+    // colors animation
+    if (this.fps === 1) {
+      this.fps = this.defaultFps;
+    }
+
     this.actionFrame = viewer.getUint16(6);
     this.numFrames = viewer.getUint16(8) || this.defaultNumFrames;
 

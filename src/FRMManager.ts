@@ -1,5 +1,6 @@
 import { FRMFrame, FRM } from "./FRM";
-import { palette } from "./palette";
+import { SECOND } from "./constants";
+import { FIRE_FAST_DELAY, FIRE_FAST_OFFSET, FIRE_SLOW_DELAY, FIRE_SLOW_OFFSET, MONITORS_DELAY, MONITORS_OFFSET, PALETTE_INDICES_OFFSET, SHORELINE_DELAY, SHORELINE_OFFSET, SLIME_DELAY, SLIME_OFFSET, createPaletteUpdater, fireFast, fireSlow, monitors, palette, shoreline, slime } from "./palette";
 
 export class FRMManager {
   public frmListContainer: HTMLOListElement;
@@ -230,6 +231,9 @@ export class FRMManager {
     this.frmScale += 1;
     this.frmCtx.resetTransform();
     this.frmCtx.scale(this.frmScale, this.frmScale);
+    // @TODO: This is force to start animated FRM from 0 frame
+    // but for static - ok
+    this.playFrmAnimation(this.activeFrmId, this.activeFrmDir);
   }
 
   public decreaseFrmScale() {
@@ -239,6 +243,7 @@ export class FRMManager {
     this.frmScale -= 1;
     this.frmCtx.resetTransform();
     this.frmCtx.scale(this.frmScale, this.frmScale);
+    this.playFrmAnimation(this.activeFrmId, this.activeFrmDir);
   }
 
   /**
@@ -347,17 +352,29 @@ export class FRMManager {
     let shiftX = 0;
     let shiftY = 0;
 
-    if (frm.isStatic()) {
+    if (frm.isStatic() && !frm.frmFrames[0].hasSpecialColorIndices()) {
       this.renderStaticFrm(frmId, dir);
       return;
     }
 
-    const delay = 1000 / frm.frmHeader.fps;
+    const slimeUpdater = createPaletteUpdater(palette, SLIME_OFFSET, slime, SLIME_DELAY);
+    const monitorsUpdater = createPaletteUpdater(palette, MONITORS_OFFSET, monitors, MONITORS_DELAY);
+    const fireSlowUpdater = createPaletteUpdater(palette, FIRE_SLOW_OFFSET, fireSlow, FIRE_SLOW_DELAY);
+    const fireFastUpdater = createPaletteUpdater(palette, FIRE_FAST_OFFSET, fireFast, FIRE_FAST_DELAY);
+    const shorelineUpdater = createPaletteUpdater(palette, SHORELINE_OFFSET, shoreline, SHORELINE_DELAY);
+
+    const delay = SECOND / frm.frmHeader.fps;
 
     const render = (delta: number) => {
       const interval = delta - lastDelta;
       if (interval > delay) {
         lastDelta = delta;
+
+        slimeUpdater(delta);
+        monitorsUpdater(delta);
+        fireSlowUpdater(delta);
+        fireFastUpdater(delta);
+        shorelineUpdater(delta);
 
         const [baseX, baseY] = this.getBaseShift(frmId, dir);
 
@@ -409,7 +426,7 @@ export class FRMManager {
 
     for (let y = 0; y < frame.frameHeight; y++) {
       for (let x = 0; x < frame.frameWidth; x++) {
-        const position = frame.getFrameIndex(y * frame.frameWidth + x) * 3 /* palette array shift */;
+        const position = frame.getFrameIndex(y * frame.frameWidth + x) * PALETTE_INDICES_OFFSET /* palette array shift */;
         const r = palette[position];
         const g = palette[position + 1];
         const b = palette[position + 2];

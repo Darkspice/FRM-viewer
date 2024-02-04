@@ -1,5 +1,9 @@
+import { rangeToArray } from "../utils";
+
 export class FRMFrame {
   private readonly viewer: DataView;
+
+  public specialColorIndices: number[] = rangeToArray(229, 254);
 
   public frameWidth: number;
   public frameHeight: number;
@@ -46,5 +50,9 @@ export class FRMFrame {
 
   public print() {
     console.log(this);
+  }
+
+  public hasSpecialColorIndices() {
+    return Array.from(this.getFrameIndices()).some((colorIndex) => this.specialColorIndices.includes(colorIndex))
   }
 }
