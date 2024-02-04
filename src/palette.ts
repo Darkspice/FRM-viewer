@@ -269,7 +269,6 @@ export const palette = [
 
 export const PALETTE_INDICES_OFFSET = 3;
 
-// Slime 229
 export const SLIME_OFFSET = 229;
 export const SLIME_DELAY = 200;
 export const slime = [
@@ -309,7 +308,7 @@ export const fireFast = [
   71, 0, 0
 ];
 
-export const SHORELINE_OFFSET = 243;
+export const SHORELINE_OFFSET = 248;
 export const SHORELINE_DELAY = 200;
 export const shoreline = [
   83, 63, 43,
