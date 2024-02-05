@@ -22,12 +22,16 @@ const frmMoveBottom = document.querySelector("#frm-move-bottom") as HTMLButtonEl
 const frmMoveLeft = document.querySelector("#frm-move-left") as HTMLButtonElement;
 const frmMoveRight = document.querySelector("#frm-move-right") as HTMLButtonElement;
 const frmShiftReset = document.querySelector("#frm-shift-reset") as HTMLButtonElement;
+const frmScaleDown = document.querySelector("#frm-scale-down") as HTMLButtonElement;
+const frmScaleUp = document.querySelector("#frm-scale-up") as HTMLButtonElement;
 
 frmMoveUp.onclick = () => frmManager.setUserShift(0, -5);
 frmMoveBottom.onclick = () => frmManager.setUserShift(0, 5);
 frmMoveLeft.onclick = () => frmManager.setUserShift(-5, 0);
 frmMoveRight.onclick = () => frmManager.setUserShift(5, 0);
 frmShiftReset.onclick = () => frmManager.resetUserShift();
+frmScaleDown.onclick = () => frmManager.decreaseFrmScale();
+frmScaleUp.onclick = () => frmManager.increaseFrmScale();
 
 
 clockwiseButton.onclick = frmManager.changeFrmDirection.bind(frmManager, 1);
@@ -103,6 +107,46 @@ document.addEventListener('keydown', (event) => {
     frmShiftReset.focus();
   }
 });
+
+canvas.onmousedown = (event) => {
+  canvas.style.cursor = "grabbing";
+
+  const scale = frmManager.frmScale;
+
+  let lastX = event.pageX;
+  let lastY = event.pageY;
+
+  let accumX = 0;
+  let accumY = 0;
+
+  document.onmousemove = (e) => {
+    const x = lastX - e.pageX;
+    const y = lastY - e.pageY;
+    lastX = e.pageX;
+    lastY = e.pageY;
+
+    accumX += x;
+    accumY += y;
+
+    if (Math.abs(accumX) >= scale) {
+      const shiftX = Math.ceil(Math.abs(x) / scale) * Math.sign(x) * -1;
+      frmManager.setUserShift(shiftX, 0);
+      accumX = 0;
+    }
+
+    if (Math.abs(accumY) >= scale) {
+      const shiftY = Math.ceil(Math.abs(y) / scale) * Math.sign(y) * -1;
+      frmManager.setUserShift(0, shiftY);
+      accumY = 0;
+    }
+  };
+
+  canvas.onmouseup = () => {
+    document.onmousemove = null;
+    canvas.onmouseup = null;
+    canvas.style.cursor = "";
+  };
+};
 
 input.onchange = (event) => {
   const target = event.target as HTMLInputElement;

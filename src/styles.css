@@ -52,7 +52,9 @@ body {
 #frm-move-right,
 #frm-shift-reset,
 #counter-clockwise,
-#clockwise {
+#clockwise,
+#frm-scale-down,
+#frm-scale-up {
   position: absolute;
   cursor: pointer;
   z-index: 100;
@@ -90,6 +92,16 @@ body {
 
 #clockwise {
   left: 60px;
+  top: 35px;
+}
+
+#frm-scale-down {
+  left: 200px;
+  top: 35px;
+}
+
+#frm-scale-up {
+  left: 230px;
   top: 35px;
 }
 
@@ -166,4 +178,5 @@ body {
 canvas {
   position: absolute;
   image-rendering: pixelated;
+  cursor: grab;
 }
