@@ -13,11 +13,55 @@
   <div id="app">
     <input multiple id="frm-input" type="file" accept=".FRM" />
     <div>
-      <div><strong>Hotkeys:</strong> "↑↓" - Выбор FRM, "←→" - Поворот FRM</div>
-      <div>"Backspace" или "Delete" - удалить FRM</div>
-      <div>"Shift + ↑↓←→" - сдвинуть FRM</div>
-      <div>"Shift + R" - сбросить сдвиг FRM</div>
-      <div>"+"/"-" - приблизить/отдалить FRM</div>
+      <strong>Hotkeys:</strong>
+      <div class="hotkeys-container">
+        <div>
+          <div class="hotkeys-combination">
+            <span class="keybinding">↑</span>
+            <span class="keybinding">↓</span>
+          </div>
+          - Выбор FRM,
+          <div class="hotkeys-combination">
+            <span class="keybinding">←</span>
+            <span class="keybinding">→</span>
+          </div>
+          - Поворот FRM
+        </div>
+        <div>
+          <span class="keybinding">Backspace</span>
+          или
+          <span class="keybinding">Delete</span>
+          - удалить FRM
+        </div>
+        <div>
+          <div class="hotkeys-combination">
+            <span class="keybinding">⇧</span>
+            <span class="keybinding">↑</span>
+            /
+            <span class="keybinding">↓</span>
+            /
+            <span class="keybinding">←</span>
+            /
+            <span class="keybinding">→</span>
+          </div>
+          - сдвинуть FRM
+        </div>
+        <div>
+          <div class="hotkeys-combination">
+            <span class="keybinding">⇧</span>
+            <span class="keybinding">R</span>
+          </div>
+          - сбросить сдвиг FRM
+        </div>
+        <div>
+          <div class="hotkeys-combination">
+            <span class="keybinding">+</span>
+            /
+            <span class="keybinding">-</span>
+          </div>
+          - приблизить/отдалить FRM
+        </div>
+      </div>
     </div>
     <div class="info-container">
       <div class="frm-viewer">
