@@ -161,3 +161,12 @@ input.onchange = (event) => {
     console.log(frmManager);
   }
 };
+
+const transparencyCheckbox = document.querySelector("#transparency") as HTMLInputElement;
+
+transparencyCheckbox.onchange = (event) => {
+  const currentTarget = event.currentTarget as HTMLInputElement;
+  if (currentTarget) {
+    frmManager.changeFrmTransparencyColor(currentTarget.checked);
+  }
+}

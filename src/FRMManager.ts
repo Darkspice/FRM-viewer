@@ -1,6 +1,26 @@
 import { FRMFrame, FRM } from "./FRM";
 import { SECOND } from "./constants";
-import { FIRE_FAST_DELAY, FIRE_FAST_OFFSET, FIRE_SLOW_DELAY, FIRE_SLOW_OFFSET, MONITORS_DELAY, MONITORS_OFFSET, PALETTE_INDICES_OFFSET, SHORELINE_DELAY, SHORELINE_OFFSET, SLIME_DELAY, SLIME_OFFSET, createPaletteUpdater, fireFast, fireSlow, monitors, palette, shoreline, slime } from "./palette";
+import {
+  FIRE_FAST_DELAY,
+  FIRE_FAST_OFFSET,
+  FIRE_SLOW_DELAY,
+  FIRE_SLOW_OFFSET,
+  MONITORS_DELAY,
+  MONITORS_OFFSET,
+  PALETTE_INDICES_OFFSET,
+  SHORELINE_DELAY,
+  SHORELINE_OFFSET,
+  SLIME_DELAY,
+  SLIME_OFFSET,
+  changeTransparencyColor,
+  createPaletteUpdater,
+  fireFast,
+  fireSlow,
+  monitors,
+  palette,
+  shoreline,
+  slime
+} from "./palette";
 
 export class FRMManager {
   public frmListContainer: HTMLOListElement;
@@ -308,6 +328,15 @@ export class FRMManager {
       Math.floor((this.frmCanvas.width / 2) / this.frmScale) + frm.frmHeader.pixelShiftX[dir] + this.userFrmShiftX,
       Math.floor((this.frmCanvas.height - 200 / 2) / this.frmScale) + frm.frmHeader.pixelShiftY[dir] + this.userFrmShiftY,
     ];
+  }
+
+  public changeFrmTransparencyColor(isOn: boolean) {
+    changeTransparencyColor(isOn);
+
+    const frm = this.getFrmFile(this.activeFrmId);
+    if (frm?.isStatic()) {
+      this.playFrmAnimation(this.activeFrmId, this.activeFrmDir);
+    }
   }
 
 

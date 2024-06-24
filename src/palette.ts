@@ -331,3 +331,19 @@ export const createPaletteUpdater = (palette: number[], offset: number, colors: 
       }
   }
 };
+
+
+const DEFAULT_TRANSPARENCY = [255, 255, 255];
+
+// actually this is default transparency color for fallout palette
+const BLUE_TRANSPARENCY = [0, 0, 255];
+
+
+export const changeTransparencyColor = (isOn: boolean) => {
+  if (isOn) {
+    palette.splice(0, PALETTE_INDICES_OFFSET, ...BLUE_TRANSPARENCY);
+    return;
+  }
+
+  palette.splice(0, PALETTE_INDICES_OFFSET, ...DEFAULT_TRANSPARENCY);
+}

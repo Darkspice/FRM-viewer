@@ -20,18 +20,18 @@
             <span class="keybinding">↑</span>
             <span class="keybinding">↓</span>
           </div>
-          - Выбор FRM,
+          - Choose FRM,
           <div class="hotkeys-combination">
             <span class="keybinding">←</span>
             <span class="keybinding">→</span>
           </div>
-          - Поворот FRM
+          - Rotate FRM
         </div>
         <div>
           <span class="keybinding">Backspace</span>
-          или
+          or
           <span class="keybinding">Delete</span>
-          - удалить FRM
+          - delete FRM
         </div>
         <div>
           <div class="hotkeys-combination">
@@ -44,14 +44,14 @@
             /
             <span class="keybinding">→</span>
           </div>
-          - сдвинуть FRM
+          - move FRM
         </div>
         <div>
           <div class="hotkeys-combination">
             <span class="keybinding">⇧</span>
             <span class="keybinding">R</span>
           </div>
-          - сбросить сдвиг FRM
+          - reset shift of FRM
         </div>
         <div>
           <div class="hotkeys-combination">
@@ -59,14 +59,14 @@
             /
             <span class="keybinding">-</span>
           </div>
-          - приблизить/отдалить FRM
+          - zoom in/zoom out FRM
         </div>
       </div>
     </div>
     <div class="info-container">
       <div class="frm-viewer">
         <div class="container">
-          <p class="container-title">Просмотр:</p>
+          <p class="container-title">Viewer:</p>
           <button id="frm-move-up">↑</button>
           <button id="frm-move-bottom">↓</button>
           <button id="frm-move-left">←</button>
@@ -82,9 +82,15 @@
         </div>
       </div>
       <div class="container">
-        <p class="container-title">Список файлов:</p>
+        <p class="container-title">File list:</p>
         <ol class="frm-list"></ol>
       </div>
+    </div>
+    <div>
+      <label>
+        <input id="transparency" type="checkbox" />
+        Turn on classic fallout transparency color (blue)
+      </label>
     </div>
   </div>
   <script type="module" src="/src/main.ts"></script>
