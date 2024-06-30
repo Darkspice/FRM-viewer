@@ -1,3 +1,4 @@
+import JSZip from "jszip";
 import { FRMFrame, FRM } from "./FRM";
 import { SECOND } from "./constants";
 import {
@@ -21,6 +22,12 @@ import {
   shoreline,
   slime
 } from "./palette";
+import { constructPictureName } from "./utils";
+
+type FileInfo = {
+  name: string;
+  blob: Blob;
+}
 
 export class FRMManager {
   public frmListContainer: HTMLOListElement;
@@ -359,7 +366,7 @@ export class FRMManager {
     shiftX += frames[currentFrame].shiftX;
     shiftY += frames[currentFrame].shiftY;
 
-    this.renderFrame(frames[0], shiftX, shiftY);
+    this.renderFrame(this.frmCtx, frames[0], shiftX, shiftY);
   }
 
   /**
@@ -416,7 +423,7 @@ export class FRMManager {
         shiftX += frames[currentFrame].shiftX;
         shiftY += frames[currentFrame].shiftY;
 
-        this.renderFrame(frames[currentFrame], shiftX, shiftY);
+        this.renderFrame(this.frmCtx, frames[currentFrame], shiftX, shiftY);
 
         shiftX += Math.floor(frames[currentFrame].frameWidth / 2);
         shiftY += frames[currentFrame].frameHeight;
@@ -450,8 +457,8 @@ export class FRMManager {
   /**
    * Render specific FRM frame
    */
-  public renderFrame(frame: FRMFrame, shiftX: number, shiftY: number) {
-    this.frmCtx.clearRect(0, 0, this.frmCanvas.width, this.frmCanvas.height);
+  public renderFrame(ctx: CanvasRenderingContext2D, frame: FRMFrame, shiftX: number, shiftY: number) {
+    ctx.clearRect(0, 0, this.frmCanvas.width, this.frmCanvas.height);
 
     for (let y = 0; y < frame.frameHeight; y++) {
       for (let x = 0; x < frame.frameWidth; x++) {
@@ -459,9 +466,84 @@ export class FRMManager {
         const r = palette[position];
         const g = palette[position + 1];
         const b = palette[position + 2];
-        this.frmCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-        this.frmCtx.fillRect(x + shiftX, y + shiftY, 1, 1);
+        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+        ctx.fillRect(x + shiftX, y + shiftY, 1, 1);
       }
+    }
+  }
+
+  public generatImagesFromFrm() {
+    const frm = this.getFrmFile(this.activeFrmId);
+    if (frm) {
+      const zip = new JSZip();
+
+      const name = frm.name.split('.')[0];
+      const framesCount = frm.frmHeader.numFrames;
+
+      const imagePromises: Array<Promise<FileInfo>> = [];
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext('2d')!;
+
+      for (let i = 0; i < frm.frmFrames.length; i++) {
+        const frame = frm.frmFrames[i];
+
+        const width = frame.frameWidth;
+        const height = frame.frameHeight;
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const pixelArray = new Array();
+
+        for (let y = 0; y < height; y++) {
+          for (let x = 0; x < width; x++) {
+            const position = frame.getFrameIndex(y * frame.frameWidth + x) * PALETTE_INDICES_OFFSET /* palette array shift */;
+            const r = palette[position];
+            const g = palette[position + 1];
+            const b = palette[position + 2];
+
+            const isWhite = [r, g, b].every((color) => color === 255);
+            const a = isWhite ? 0 : 255;
+
+            pixelArray.push(r, g, b, a);
+          }
+        }
+
+        const imageData = new ImageData(new Uint8ClampedArray(pixelArray), width, height);
+        ctx.putImageData(imageData, 0, 0);
+
+        const fileName = constructPictureName(name, framesCount, i);
+        let resolve: (value: FileInfo) => void;
+        let reject: (value: string) => void;
+        const picPromise = new Promise<FileInfo>((res, rej) => {
+          resolve = res;
+          reject = rej;
+        })
+        imagePromises.push(picPromise);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            return resolve({ name: fileName, blob: blob });
+          }
+
+          reject("Blob creation failed");
+        });
+      }
+
+      Promise.all(imagePromises).then((files: FileInfo[]) => {
+        files.forEach((fileInfo) => {
+          zip.file(`${fileInfo.name}.png`, fileInfo.blob);
+        })
+
+        return zip.generateAsync({ type: "blob" })
+      }).then((content) => {
+        const link = document.createElement('a');
+        link.download = `${name}.zip`;
+        link.href = URL.createObjectURL(content);
+        link.click();
+
+        URL.revokeObjectURL(link.href);
+      })
     }
   }
 }

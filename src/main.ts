@@ -157,8 +157,6 @@ input.onchange = (event) => {
 
     // unlink files from input
     target.value = '';
-
-    console.log(frmManager);
   }
 };
 
@@ -170,3 +168,9 @@ transparencyCheckbox.onchange = (event) => {
     frmManager.changeFrmTransparencyColor(currentTarget.checked);
   }
 }
+
+const imageGenerator = document.querySelector("#image-generator") as HTMLBRElement;
+
+imageGenerator.onclick = () => {
+  frmManager.generatImagesFromFrm();
+};
