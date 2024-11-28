@@ -116,11 +116,11 @@ body {
   padding: 12px 18px 12px 56px;
 }
 
-.frm-list > li {
+.frm-list>li {
   cursor: pointer;
 }
 
-.frm-list > li:not(.frm-active):hover {
+.frm-list>li:not(.frm-active):hover {
   background-color: bisque;
 }
 
@@ -206,4 +206,21 @@ canvas {
 .hotkeys-combination {
   display: inline-flex;
   gap: 3px;
+}
+
+.drop-zone {
+  display: flex;
+  position: fixed;
+  top: 2px;
+  right: 2px;
+  bottom: 2px;
+  left: 2px;
+  z-index: 999;
+  border: 2px dashed #000;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.drop-zone-hidden {
+  display: none;
 }

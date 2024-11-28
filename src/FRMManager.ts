@@ -61,7 +61,7 @@ export class FRMManager {
   public addFrmFile(file: File) {
     const frm = new FRM(file);
     frm.onLoad = () => {
-      // @TODO: переделать на темплейты
+      // @TODO: convert to templates
       const li = document.createElement('li');
       li.dataset.frmId = String(this.frmId);
 
@@ -91,9 +91,9 @@ export class FRMManager {
   /**
    * Add FRM files from list or array
    */
-  public addFrmFilesList(frmFileList: FileList) {
-    for (let i = 0; i < frmFileList.length; i++) {
-      const file = frmFileList.item(i);
+  public addFrmFiles(files: File[]) {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
       if (file) {
         this.addFrmFile(file);
       }

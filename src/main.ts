@@ -1,5 +1,10 @@
+// @TODO: Read frm frame separately
+
 import { FRMManager } from "./FRMManager";
 
+const FILE_TYPE = ".FRM";
+
+const body = document.body;
 // const app = document.querySelector("#app") as HTMLDivElement;
 const frmContainer = document.querySelector("#frm-container") as HTMLDivElement;
 const frmContainerWidth = frmContainer.clientWidth;
@@ -36,6 +41,25 @@ frmScaleUp.onclick = () => frmManager.increaseFrmScale();
 
 clockwiseButton.onclick = frmManager.changeFrmDirection.bind(frmManager, 1);
 counterClockwiseButton.onclick = frmManager.changeFrmDirection.bind(frmManager, -1);
+
+const addFiles = (files: FileList | null | undefined) => {
+  if (files && files.length > 0) {
+    const filteredFiles = Array.from(files).filter((file) => {
+      const targetFileType = FILE_TYPE.toLocaleLowerCase();
+      const fileType = file.type.toLocaleLowerCase();
+      const fileName = file.name.toLocaleLowerCase();
+
+      return fileType === targetFileType || fileName.endsWith(targetFileType);
+    });
+
+    if (filteredFiles.length === 0) {
+      alert("No files with valid file type. Please upload a .FRM file type files")
+      return;
+    }
+
+    frmManager.addFrmFiles(filteredFiles);
+  }
+};
 
 // Register hotkeys
 document.addEventListener('keydown', (event) => {
@@ -151,13 +175,10 @@ canvas.onmousedown = (event) => {
 input.onchange = (event) => {
   const target = event.target as HTMLInputElement;
   const files = target.files;
+  addFiles(files);
 
-  if (files) {
-    frmManager.addFrmFilesList(files);
-
-    // unlink files from input
-    target.value = '';
-  }
+  // unlink files from input
+  target.value = '';
 };
 
 const transparencyCheckbox = document.querySelector("#transparency") as HTMLInputElement;
@@ -174,3 +195,43 @@ const imageGenerator = document.querySelector("#image-generator") as HTMLBREleme
 imageGenerator.onclick = () => {
   frmManager.generatImagesFromFrm();
 };
+
+// Drag and drop
+const dropZone = document.querySelector(".drop-zone") as HTMLBodyElement;
+let dragCounter = 0;
+
+
+body.addEventListener("dragenter", (event) => {
+  event.preventDefault();
+
+  if (dragCounter > 1) return;
+
+  dragCounter++;
+
+  dropZone.classList.remove("drop-zone-hidden");
+});
+
+body.addEventListener("dragleave", (event) => {
+  event.preventDefault();
+
+  dragCounter--;
+
+  if (dragCounter === 0) {
+    dropZone.classList.add("drop-zone-hidden");
+  }
+})
+
+body.addEventListener("dragover", (event) => {
+  event.preventDefault();
+});
+
+body.addEventListener("drop", (event) => {
+  event.preventDefault();
+
+  const files = event.dataTransfer?.files;
+  addFiles(files);
+
+  dragCounter = 0;
+
+  dropZone.classList.add("drop-zone-hidden");
+})
