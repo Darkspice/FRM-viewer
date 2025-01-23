@@ -46,6 +46,7 @@ export class FRMManager {
 
   private activeFrmId: number = -1;
   private activeFrmDir: number = 0;
+  private activeFrmFrame: number = 0;
 
   constructor(listContainer: HTMLOListElement, frmCanvas: HTMLCanvasElement) {
     this.frmListContainer = listContainer;
@@ -305,7 +306,10 @@ export class FRMManager {
 
     if (frm.isStatic()) {
       this.renderStaticFrm(this.activeFrmId, this.activeFrmDir);
+      return;
     }
+
+    this.renderSpecificFrame(this.activeFrmId, this.activeFrmDir, this.activeFrmFrame);
   }
 
   public resetUserShift() {
@@ -346,8 +350,7 @@ export class FRMManager {
     }
   }
 
-
-  public renderStaticFrm(frmId: number, dir: number) {
+  public renderSpecificFrame(frmId: number, dir: number, specificFrame: number) {
     const frm = this.getFrmFile(frmId);
 
     if (!frm) {
@@ -356,17 +359,20 @@ export class FRMManager {
     }
 
     const frames = frm.getFrames(dir);
-    const currentFrame = 0;
-
     let [shiftX, shiftY] = this.getBaseShift(frmId, dir);
 
-    shiftX -= Math.floor(frames[currentFrame].frameWidth / 2);
-    shiftY -= frames[currentFrame].frameHeight;
+    shiftX -= Math.floor(frames[specificFrame].frameWidth / 2);
+    shiftY -= frames[specificFrame].frameHeight;
 
-    shiftX += frames[currentFrame].shiftX;
-    shiftY += frames[currentFrame].shiftY;
+    shiftX += frames[specificFrame].shiftX;
+    shiftY += frames[specificFrame].shiftY;
 
-    this.renderFrame(this.frmCtx, frames[0], shiftX, shiftY);
+    this.renderFrame(this.frmCtx, frames[specificFrame], shiftX, shiftY);
+  }
+
+
+  public renderStaticFrm(frmId: number, dir: number) {
+    this.renderSpecificFrame(frmId, dir, 0);
   }
 
   /**
@@ -384,7 +390,6 @@ export class FRMManager {
     const frames = frm.getFrames(dir);
 
     let lastDelta = 0;
-    let currentFrame = 0;
     let shiftX = 0;
     let shiftY = 0;
 
@@ -417,24 +422,24 @@ export class FRMManager {
         shiftX += baseX;
         shiftY += baseY;
 
-        shiftX -= Math.floor(frames[currentFrame].frameWidth / 2);
-        shiftY -= frames[currentFrame].frameHeight;
+        shiftX -= Math.floor(frames[this.activeFrmFrame].frameWidth / 2);
+        shiftY -= frames[this.activeFrmFrame].frameHeight;
 
-        shiftX += frames[currentFrame].shiftX;
-        shiftY += frames[currentFrame].shiftY;
+        shiftX += frames[this.activeFrmFrame].shiftX;
+        shiftY += frames[this.activeFrmFrame].shiftY;
 
-        this.renderFrame(this.frmCtx, frames[currentFrame], shiftX, shiftY);
+        this.renderFrame(this.frmCtx, frames[this.activeFrmFrame], shiftX, shiftY);
 
-        shiftX += Math.floor(frames[currentFrame].frameWidth / 2);
-        shiftY += frames[currentFrame].frameHeight;
+        shiftX += Math.floor(frames[this.activeFrmFrame].frameWidth / 2);
+        shiftY += frames[this.activeFrmFrame].frameHeight;
 
         shiftX -= baseX;
         shiftY -= baseY;
 
-        currentFrame += 1;
+        this.activeFrmFrame += 1;
 
-        if (currentFrame >= frm.frmHeader.numFrames) {
-          currentFrame = 0;
+        if (this.activeFrmFrame >= frm.frmHeader.numFrames) {
+          this.activeFrmFrame = 0;
           shiftX = 0;
           shiftY = 0;
         }
@@ -452,6 +457,7 @@ export class FRMManager {
   public stopFrmAnimation() {
     window.cancelAnimationFrame(this.rafId);
     this.frmCtx.clearRect(0, 0, this.frmCanvas.width, this.frmCanvas.height);
+    this.activeFrmFrame = 0;
   }
 
   /**
